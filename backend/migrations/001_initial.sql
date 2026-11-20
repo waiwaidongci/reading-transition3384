@@ -1,3 +1,3 @@
 -- SQLAlchemy metadata initializes tables idempotently.
--- Domain tables: reading_collections, reading_sessions, transition_runs, editorial_plans.
+-- Domain tables: reading_collections, reading_sessions, transition_runs, session_splits, editorial_plans.
 -- Unique natural keys: source.key; (record.source_id, record.reference).

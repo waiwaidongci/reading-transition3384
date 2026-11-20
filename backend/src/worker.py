@@ -5,7 +5,9 @@ from .config.database import Session
 from .config.settings import REDIS_URL,ARTIFACT_DIR
 from .models.run import Run
 from .models import source,record,user,note,audit
+from .models.split import SplitJob
 from .services.algorithm import calculate
+from .services.splits import execute as execute_split
 from .services.audit import log
 from .services.export import csv_response
 queue=Redis.from_url(REDIS_URL)
@@ -30,5 +32,8 @@ def main():
     while True:
         (ARTIFACT_DIR/'heartbeat').write_text(str(time.time()))
         value=queue.blpop('analysis:queue',timeout=2)
-        if value:execute(int(value[1]))
+        if value:
+            task=value[1].decode() if isinstance(value[1],bytes) else str(value[1])
+            if task.startswith('split:'):execute_split(int(task.split(':',1)[1]))
+            else:execute(int(task))
 if __name__=='__main__':main()
